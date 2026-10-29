@@ -1,4 +1,86 @@
+# DCP for OpenCode 2.2.x — local-plugin fork
+
+Fork of [`p4r4d0xb0x/opencode-dcp`](https://github.com/p4r4d0xb0x/opencode-dcp)
+(which is itself a fork of [`@tarquinen/opencode-dcp`](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning)),
+patched so the plugin **loads and runs on OpenCode 2.2.2+**, installed as a
+*local* plugin instead of an npm package.
+
+## Why this fork exists
+
+The published `@p4r4d0xb0x/opencode-dcp@4.0.2` cannot load on OpenCode 2.2.x:
+its runtime import of the pinned `@opencode-ai/plugin@0.0.0-beta-18992` pulls
+schema modules that call `Schema.isStartsWith`, which the host's aliased
+`effect/Schema` build does not export —
+
+```
+TypeError: Schema.isStartsWith is not a function ('Schema.isStartsWith("wrk")')
+```
+
+at plugin-load time. The `@opencode-ai/*` scope is additionally shadowed by
+older V1 SDK installs under `~/.config/opencode/node_modules`.
+
+## Changes made in this fork
+
+- **SDK retargeted to `@opencode/plugin@2.2.2`** — the host-aliased V2 scope
+  (`@opencode/plugin`, `@opencode/plugin/tui`, `effect/*` aliases in the host).
+- **Vendored `Plugin.define` / `Rpc.define`** (they are identity/validation
+  passthroughs), so the server bundle has **zero** bare runtime imports beyond
+  node builtins — immune to host module-redirect traps.
+- **Self-contained builds** (tsup): bundles `@anthropic-ai/tokenizer` +
+  `jsonc-parser`, no chunk splitting, ESM banner providing `require`,
+  `__filename`, `__dirname` for the bundled CJS tokenizer. The tokenizer's
+  `tiktoken_bg.wasm` is placed by the deploy script where the loader's
+  `node_modules` ancestor search finds it.
+- **API drift fixes** vs. the beta SDK the fork was written against:
+  `ctx.catalog.model.list` → `ctx.model.list`, `session.command({command})` →
+  `({name})`.
+- **`flattenTheme` rewritten** for the 2.2.2 `ResolvedTheme` token tree
+  (`base`/`muted`/stateful RGBA, `background.raised`), wrapped in a
+  terminal-defaults fallback so a future theme-shape change can never crash
+  the TUI (fixes `theme.background.surface.offset` crash in the DCP panel).
+- **`npm run deploy`** installs everything as a directory plugin.
+
+## Install (this fork)
+
+Requirements: Node 20+, and **OpenCode ≥ 2.2.2 with the `@opencode/plugin`
+version matching it** (`devDependencies` pin `@opencode/plugin@2.2.2` — bump it
+to your `opencode --version` if you run a newer host).
+
+```sh
+git clone git@github.com:FoMiN12/opencode-dcp.git
+cd opencode-dcp
+npm install
+npm run deploy
+```
+
+`npm run deploy` copies the built bundles to
+`~/.config/opencode/plugins/opencode-dcp/` (`index.js` server plugin, `tui.js`
+terminal plugin, `package.json`) and places `tiktoken_bg.wasm` under
+`~/.config/opencode/node_modules/tiktoken/lite/`.
+
+Then:
+
+1. Put your `dcp.jsonc` in `~/.config/opencode/` (config format is unchanged
+   from upstream — see below). Recommended for local builds:
+   `"autoUpdate": false`.
+2. Restart the opencode service and TUI.
+3. Verify: `opencode plugin list` shows `opencode-dcp · local`;
+   `/dcp` opens the status panel; `/dcp-compress` forces compression.
+
+Uninstall: `rm -rf ~/.config/opencode/plugins/opencode-dcp` and
+`rm -rf ~/.config/opencode/node_modules/tiktoken`.
+
+> ⚠️ If you also want OpenCode's own auto-compaction disabled (DCP as the only
+> context mechanism), set `"compaction": { "auto": false }` in
+> `~/.config/opencode/opencode.json`.
+
+Everything below is the original upstream README (config reference, commands,
+behavior).
+
+---
+
 # Dynamic Context Pruning Plugin (OpenCode 2)
+
 
 [![npm version](https://img.shields.io/npm/v/@p4r4d0xb0x/opencode-dcp.svg)](https://www.npmjs.com/package/@p4r4d0xb0x/opencode-dcp)
 
