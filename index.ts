@@ -5,7 +5,6 @@
  * and registers the V2 hooks/tools/commands. All host-specific logic lives in
  * `lib/opencode/`; all pruning logic lives in the host-agnostic core.
  */
-import { Plugin } from "@opencode-ai/plugin"
 import { getConfig } from "./lib/config"
 import { createCompressMessageTool, createCompressRangeTool } from "./lib/compress"
 import type { HostPermissionSnapshot } from "./lib/host-permissions"
@@ -45,7 +44,12 @@ async function disposeAll(registrations: Disposable[]): Promise<void> {
     }
 }
 
-export default Plugin.define({
+// `Plugin.define` upstream is an identity function; annotating a plain object
+// keeps identical typing while avoiding any runtime import of
+// `@opencode/plugin` (see rpc.ts note).
+type PluginDefinition = Parameters<typeof import("@opencode/plugin").Plugin.define>[0];
+
+const definition: PluginDefinition = {
     id: PLUGIN_ID,
     async setup(ctx) {
         const directory = ctx.location.directory
@@ -145,4 +149,6 @@ export default Plugin.define({
 
         return () => disposeAll(registrations)
     },
-})
+}
+
+export default definition

@@ -5,8 +5,8 @@
  * compression summaries, nudges) and the system-prompt transform. Messages run
  * first so session state is initialized before the system prompt is rendered.
  */
-import type { Plugin } from "@opencode-ai/plugin"
-import type { SessionContext } from "@opencode-ai/plugin/promise/session"
+import type { Plugin } from "@opencode/plugin"
+import type { SessionContext } from "@opencode/plugin/promise/session"
 import type { PluginConfig } from "../config"
 import type { HostPermissionSnapshot } from "../host-permissions"
 import type { Logger } from "../logger"

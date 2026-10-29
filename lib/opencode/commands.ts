@@ -5,7 +5,7 @@
  * in, optional prompt parts out). When it produces a prompt (manual compress
  * trigger) this adapter submits it as a real user prompt so the model runs.
  */
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin } from "@opencode/plugin"
 import type { Logger } from "../logger"
 
 export const MANUAL_TRIGGER_BLOCKED = "__DCP_MANUAL_TRIGGER_BLOCKED__"

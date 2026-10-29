@@ -6,7 +6,7 @@
  * Provides the `/dcp` panel, forwards `/dcp <subcommand>` to the server-side
  * command, and renders toast notifications emitted by the server plugin.
  */
-import { Plugin } from "@opencode-ai/plugin/tui"
+import { Plugin } from "@opencode/plugin/tui"
 import { DcpRpc, type DcpToastEvent } from "./lib/opencode/rpc"
 import { registerCommands } from "./lib/tui/commands"
 import { activeSessionID, loadConfig } from "./lib/tui/data"
@@ -57,7 +57,7 @@ export default Plugin.define({
                         }
                         await context.client.session.command({
                             sessionID,
-                            command: "dcp",
+                            name: "dcp",
                             text,
                         })
                     },

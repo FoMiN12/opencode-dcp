@@ -5,7 +5,7 @@
  * `context` hook only carries the model reference, so the limit is looked up
  * (and cached) from `ctx.catalog.model.list()`.
  */
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin } from "@opencode/plugin"
 import type { Logger } from "../logger"
 import type { HostModelRef } from "./host-types"
 
@@ -28,7 +28,7 @@ export function createModelLimitResolver(ctx: Plugin.Context, logger: Logger): M
 
     const refresh = async () => {
         try {
-            const response = await ctx.catalog.model.list()
+            const response = await ctx.model.list()
             const models = (response as { data?: CatalogModel[] }).data ?? []
             for (const model of models) {
                 const limit = model.limit?.context

@@ -6,7 +6,7 @@
  * `tui.showToast`). Rather than rewriting every call site, this module keeps
  * that slice as DCP's host port and backs it with the V2 plugin context.
  */
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin } from "@opencode/plugin"
 import type { WithParts } from "../state"
 import type { HostSessionMessage } from "./host-types"
 import { convertSessionMessages, DCP_NOTIFICATION_METADATA } from "./session-to-parts"

@@ -6,7 +6,7 @@
  * no part events, so the same metric is derived from the `context` hook (model
  * call start) and the `execute.before` tool hook (compress call handed to DCP).
  */
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin } from "@opencode/plugin"
 import { buildCompressionTimingKey } from "../compress/timing"
 import type { Logger } from "../logger"
 import type { SessionState } from "../state"

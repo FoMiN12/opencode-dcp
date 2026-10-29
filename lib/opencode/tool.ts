@@ -6,7 +6,7 @@
  * OpenCode 2 (beta) does not let plugin tools raise an interactive permission
  * prompt, so the V1 `ask` flow degrades to `allow`; `ask()` is therefore a no-op.
  */
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin } from "@opencode/plugin"
 import type { DcpToolDefinition } from "../compress/types"
 import type { Logger } from "../logger"
 

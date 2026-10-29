@@ -1,4 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin/tui"
+import type { Plugin } from "@opencode/plugin/tui"
 import type { RGBA } from "@opentui/core"
 import type { buildStatsReport } from "../commands/stats"
 
